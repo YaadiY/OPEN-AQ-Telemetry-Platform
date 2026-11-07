@@ -1,0 +1,16 @@
+services:
+  openaq-ingestion:
+    build:
+      context: .
+      dockerfile: ingestion/Dockerfile
+    container_name: openaq_ingestion_runner
+    env_file:
+      - .env
+    environment:
+      # Direct Python to the mounted ADC credentials
+      - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
+    volumes:
+      # 1. Mount local data directory so files persist on host
+      - ./data:/app/data
+      # 2. Mount local GCP credentials as read-only (Windows AppData path)
+      - ${APPDATA}/gcloud/application_default_credentials.json:/root/.config/gcloud/application_default_credentials.json:ro

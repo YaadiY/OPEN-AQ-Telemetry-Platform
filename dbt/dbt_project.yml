@@ -1,0 +1,26 @@
+name: 'openaq_platform'
+version: '1.0.0'
+config-version: 2
+
+profile: 'openaq_project'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  openaq_platform:
+    # Staging models will be created as lightweight Views
+    staging:
+      +materialized: view
+      +schema: raw
+    # Core Marts will be materialized as high-performance Physical Tables
+    marts:
+      +materialized: table
+      +schema: marts

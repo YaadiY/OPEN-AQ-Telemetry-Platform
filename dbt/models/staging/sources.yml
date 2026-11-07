@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: openaq_source
+    database: project-acf803b4-e926-4de8-aa7
+    schema: openaq_raw
+    tables:
+      - name: ext_air_quality
+        description: "External table over raw GCS Parquet telemetry files"

@@ -1,0 +1,7 @@
+requests==2.32.3                                       # for querying OpenAQ rest API 
+pandas==2.2.3                                          #to convert nested JSON from OpenAQ into column-oriented Parquet format 
+pyarrow==18.1.0                                        #for efficient column-oriented Parquet storage and read/write on GCS 
+google-cloud-storage==2.19.0                           #official Google Cloud SDK to upload parquet files to GCS 
+python-dotenv==1.0.1                                   #to securely load environment variables from .env file 
+google-cloud-bigquery==3.27.0
+db-dtypes==1.3.1

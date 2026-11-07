@@ -1,0 +1,11 @@
+openaq_project:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: project-acf803b4-e926-4de8-aa7
+      dataset: openaq_marts
+      location: asia-south1
+      threads: 4
+      timeout_seconds: 300

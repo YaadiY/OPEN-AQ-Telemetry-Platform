@@ -1,0 +1,28 @@
+# Python virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+# Secrets, API Keys & GCP Credentials
+*.json
+!credentials.example.json
+.env
+.env.*
+# Terraform state files (contain sensitive cloud details)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local Data Lake storage (CSVs and Parquets belong in GCS, not Git)
+data/
+
+# dbt compiled targets and logs
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/

@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: dim_stations
+    description: "Dimension table of unique air quality monitoring stations"
+    columns:
+      - name: station_id
+        description: "Primary key of the station"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_pollutants
+    description: "Dimension table of target air pollutants and safety limits"
+    columns:
+      - name: pollutant
+        description: "Primary key: pollutant identifier"
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_air_quality_measurements
+    description: "Fact table containing deduplicated air quality telemetry"
+    columns:
+      - name: measurement_id
+        description: "Surrogate primary key"
+        tests:
+          - unique
+          - not_null
+      - name: station_id
+        description: "Foreign key linking to dim_stations"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_stations')
+              field: station_id
+      - name: pollutant
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['pm25', 'pm10']
+      - name: measurement_value
+        tests:
+          - not_null
