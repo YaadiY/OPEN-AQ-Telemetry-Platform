@@ -24,12 +24,12 @@ flowchart TD
         Backfill["1. Historical Backfill: backfill_historical.py\n• Queries /sensors/{id}/days (1 request = 1,000 days)\n• 10-Year History (2016–2026): 264k+ Rows\n• Output: openaq_historical_days.parquet (2.2 MB)"]
         Incremental["2. Daily Batch Runner: fetch_daily.py\n• 48-Hour Trailing Sliding Window\n• Eliminates late-arriving IoT telemetry gaps\n• Output: openaq_daily_YYYYMMDD.parquet (~220 KB)"]
         
-        API -->|1 Request/Sensor| Backfill
+        API -->|Batch Query| Backfill
         API -->|Sliding 48h Overlap| Incremental
     end
 
     subgraph GoogleCloudPlatform ["Google Cloud Platform (GCP Lakehouse)"]
-        GCS[("Google Cloud Storage (Bronze Lake)\ngs://openaq-telemetry-bronze-acf803b4\n(Uniform Bucket Access, 30-Day Nearline Tiering)")]
+        GCS[("Google Cloud Storage (Bronze Lake)\ngs://<bucket-name>/bronze/*.parquet\n(Uniform Bucket Access, 30-Day Nearline Tiering)")]
         BQ_Ext[("BigQuery: Silver Staging\nopenaq_raw.ext_air_quality (Wildcard *.parquet)")]
         dbt_stg["dbt Staging View: stg_openaq__air_quality\n(Parquet Epoch Decoding + Window Deduplication)"]
         dbt_marts["dbt Gold Marts (Star Schema - openaq_marts_marts)\n• dim_stations (173 Stations, SCD Canonical Deduplication)\n• dim_pollutants (PM2.5, PM10 with WHO Limits)\n• fct_air_quality_measurements (287.6k Rows, Partitioned & Clustered)"]
@@ -139,10 +139,10 @@ Completed successfully. Done. PASS=11 WARN=0 ERROR=0 SKIP=0 TOTAL=11
 ### 2. Configure Environment & Credentials
 ```bash
 # Clone the repository
-git clone https://github.com/YaadiY/OPENAQ_GCP_Platform.git
-cd OPENAQ_GCP_Platform
+git clone https://github.com/<your-username>/OPEN-AQ-Telemetry-Platform.git
+cd OPEN-AQ-Telemetry-Platform
 
-# Setup environment variables
+# Setup environment variables from template
 cp .env.example .env
 # Edit .env with your OPENAQ_API_KEY and GCP_PROJECT_ID
 
@@ -176,10 +176,7 @@ docker compose up -d kestra
 
 ---
 
-## 📚 Study Documentation & Technical Playbooks
+## 📖 In-Depth Documentation
 
-Comprehensive documentation and interview resources are maintained in `C:\Users\yeleg\VS\Study_docs`:
-* **Complete Architecture Guide:** [`openaq_gcp_platform_architecture_guide.md`](file:///C:/Users/yeleg/VS/Study_docs/openaq_gcp_platform_architecture_guide.md)
-  *(Detailed deep-dives on 12-factor design, Nearline storage FinOps math, dual ingestion mechanics, and Docker-in-Docker setup)*.
-* **Technical Interview Playbook (18 Questions):** [`openaq_interview_playbook.md`](file:///C:/Users/yeleg/VS/Study_docs/openaq_interview_playbook.md)
-  *(Includes verbatim Junior vs. Senior engineer answers covering rate limits, SCD canonical modeling, and BigQuery partitioning)*.
+* **[System Architecture Deep-Dive](docs/ARCHITECTURE.md):** Detailed design analysis on 12-factor principles, FinOps calculations, and rate-limit bypass strategies.
+* **[Data Dictionary & Schema Contracts](docs/DATA_DICTIONARY.md):** Complete field-level definitions, types, descriptions, and constraints for all dimensional models.

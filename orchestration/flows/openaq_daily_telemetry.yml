@@ -3,9 +3,10 @@ namespace: openaq
 description: "Autonomous daily telemetry pipeline: Ingestion -> GCS Bronze Lake -> dbt BigQuery Models -> Automated Testing"
 
 variables:
-  openaq_api_key: "38b4940e59e720e82c49a701728f7c9bcbfdb7bc315856606556259f7744167f"
-  gcp_project_id: "project-acf803b4-e926-4de8-aa7"
-  gcs_bucket_name: "openaq-telemetry-bronze-acf803b4"
+  # In production, values are passed via .env or Kestra Secrets
+  openaq_api_key: "{{ env('OPENAQ_API_KEY', 'your_openaq_api_key_here') }}"
+  gcp_project_id: "{{ env('GCP_PROJECT_ID', 'your_gcp_project_id_here') }}"
+  gcs_bucket_name: "{{ env('GCS_BUCKET_NAME', 'your_gcs_bucket_name_here') }}"
 
 tasks:
   # =========================================================================
