@@ -12,8 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY ingestion/requirements.txt .
 
-# Install dependencies into a separate wheels/wheels folder
-RUN pip install --no-cache-dir --user -r requirements.txt
+# Install dependencies using uv for parallel, resilient downloads
+RUN pip install --no-cache-dir uv && \
+    uv pip install --no-cache --system --prefix /root/.local -r requirements.txt
 
 
 # ==========================================
@@ -29,12 +30,17 @@ COPY --from=builder /root/.local /root/.local
 # Ensure user packages are accessible in PATH
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
+ENV GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
 
-# Copy source code
+# Copy GCP credentials into standard ADC path
+COPY gcp_credentials.json /root/.config/gcloud/application_default_credentials.json
+
+# Copy source code and dbt models
 COPY ingestion/ /app/ingestion/
+COPY dbt/ /app/dbt/
 
 # Set working directory to project root for module imports
 WORKDIR /app
 
-# Run the master pipeline on container startup
-ENTRYPOINT ["python", "ingestion/run_pipeline.py"]
+# Default command
+CMD ["python", "ingestion/run_pipeline.py"]
