@@ -58,3 +58,4 @@ This document outlines the schema, data types, constraints, and descriptions for
 | `health_description` | `STRING` | Description | Epidemiological risk summary | `"Fine inhalable particles..."` |
 | `who_annual_safe_limit_ugm3` | `FLOAT64` | WHO Standard | World Health Organization annual safety threshold | `5.0` (PM2.5) / `15.0` (PM10) |
 | `cpcb_24h_safe_limit_ugm3` | `FLOAT64` | Indian Standard | Central Pollution Control Board 24h safety limit | `60.0` (PM2.5) / `100.0` (PM10) |
+

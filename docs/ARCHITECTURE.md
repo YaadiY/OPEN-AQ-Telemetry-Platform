@@ -103,3 +103,4 @@ flowchart TD
 | **Lake Storage** | Indefinite GCS Standard Storage (\$0.026/GB/mo) | 30-Day Auto Transition to Nearline (\$0.010/GB/mo) | **~50% Storage Reduction** |
 | **File Format** | Raw JSON / CSV files | Snappy-compressed columnar Parquet | **72.2% Storage Reduction** |
 | **BigQuery Scans** | Full-table scans on every dashboard refresh | Daily Partitioning + Clustering on `city, pollutant` | **80–95% Scan Reduction** |
+
