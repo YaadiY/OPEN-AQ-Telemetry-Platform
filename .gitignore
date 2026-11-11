@@ -3,16 +3,20 @@
 venv/
 __pycache__/
 *.pyc
+
 # Secrets, API Keys & GCP Credentials
 *.json
 !credentials.example.json
 .env
 .env.*
+!.env.example
+
 # Terraform state files (contain sensitive cloud details)
 *.tfstate
 *.tfstate.*
 .terraform/
 .terraform.lock.hcl
+
 # IDE & OS files
 .vscode/
 .idea/
