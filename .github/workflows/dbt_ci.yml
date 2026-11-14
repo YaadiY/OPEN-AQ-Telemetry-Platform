@@ -1,0 +1,52 @@
+name: OpenAQ dbt CI Pipeline
+
+# Trigger on Pull Requests to the main branch
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dbt/**'               # Only run when files inside the dbt/ directory are modified
+
+jobs:
+  dbt_data_quality_tests:
+    name: Run dbt Compilation & Quality Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python environment
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      # Step 3: Install dbt and BigQuery adapter
+      - name: Install dbt-bigquery
+        run: |
+          pip install --upgrade pip
+          pip install dbt-bigquery
+
+      # Step 4: Authenticate to Google Cloud using Service Account stored in GitHub Secrets
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Step 5: Install dbt packages and compile SQL
+      - name: dbt Deps & Compile
+        run: |
+          cd dbt
+          dbt deps
+          dbt compile --profiles-dir . --target dev
+
+      # Step 6: Execute Data Quality Tests (Uniqueness, Not-Null, Referential Integrity)
+      - name: Run dbt Data Quality Tests
+        run: |
+          cd dbt
+          dbt test --profiles-dir . --target dev
+
