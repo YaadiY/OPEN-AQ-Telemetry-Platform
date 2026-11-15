@@ -32,13 +32,15 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_stations')
-              field: station_id
+              arguments:
+                to: ref('dim_stations')
+                field: station_id
       - name: pollutant
         tests:
           - not_null
           - accepted_values:
-              values: ['pm25', 'pm10']
+              arguments:
+                values: ['pm25', 'pm10']
       - name: measurement_value
         tests:
           - not_null
