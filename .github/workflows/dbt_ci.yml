@@ -12,15 +12,18 @@ jobs:
   dbt_data_quality_tests:
     name: Run dbt Compilation & Quality Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       # Step 1: Check out the repository code
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Set up Python environment
       - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           cache: 'pip'
@@ -31,14 +34,17 @@ jobs:
           pip install --upgrade pip
           pip install dbt-bigquery
 
-      # Step 4: Authenticate to Google Cloud using Service Account stored in GitHub Secrets
+      # Step 4: Authenticate to Google Cloud via Workload Identity Federation (Keyless)
       - name: Authenticate to GCP
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: 'projects/165723068338/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider'
+          service_account: 'openaq-data-engineer@project-acf803b4-e926-4de8-aa7.iam.gserviceaccount.com'
 
       # Step 5: Install dbt packages and compile SQL
       - name: dbt Deps & Compile
+        env:
+          GCP_PROJECT_ID: project-acf803b4-e926-4de8-aa7
         run: |
           cd dbt
           dbt deps
@@ -46,6 +52,8 @@ jobs:
 
       # Step 6: Execute Data Quality Tests (Uniqueness, Not-Null, Referential Integrity)
       - name: Run dbt Data Quality Tests
+        env:
+          GCP_PROJECT_ID: project-acf803b4-e926-4de8-aa7
         run: |
           cd dbt
           dbt test --profiles-dir . --target dev
