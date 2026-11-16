@@ -16,6 +16,8 @@ select
     sensor_id,
     city,
     local_area,
+    latitude,
+    longitude,
     pollutant,
     measurement_value,
     measured_at_utc,
